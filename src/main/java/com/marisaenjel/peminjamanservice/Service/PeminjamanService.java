@@ -9,6 +9,7 @@ import com.marisaenjel.peminjamanservice.Repository.PeminjamanRepository;
 import com.marisaenjel.peminjamanservice.Vo.Anggota;
 import com.marisaenjel.peminjamanservice.Vo.Buku;
 import com.marisaenjel.peminjamanservice.Vo.ResponseTemplateVO;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -19,7 +20,7 @@ import org.springframework.web.client.RestTemplate;
  */
 @Service
 public class PeminjamanService {
-   @Autowired
+     @Autowired
     private PeminjamanRepository peminjamanRepository;
     
     @Autowired
@@ -33,13 +34,29 @@ public class PeminjamanService {
      public ResponseTemplateVO getPeminjaman(Long peminjamanId){
         ResponseTemplateVO vo = new ResponseTemplateVO();
         Peminjaman peminjaman = peminjamanRepository.findByPeminjamanId(peminjamanId);
-        Anggota anggota = restTemplate.getForObject("http://localhost:8080/anggota/" 
+        Anggota anggota = restTemplate.getForObject("http://localhost:8111/anggota/" 
               + peminjaman.getAnggotaId(), Anggota.class);
-        Buku buku = restTemplate.getForObject("http://localhost:8004/buku/" 
+        Buku buku = restTemplate.getForObject("http://localhost:8117/buku/" 
                 + peminjaman.getBukuId(), Buku.class);
         vo.setPeminjaman(peminjaman);
         vo.setAnggota(anggota);
         vo.setBuku(buku);
         return vo;
+    }
+     
+     public Peminjaman findPeminjamanById(Long peminjamanId){
+        return peminjamanRepository.findByPeminjamanId(peminjamanId);
     } 
+     
+    public List<Peminjaman> getAllPeminjaman(){
+        return peminjamanRepository.findAll();
+    }
+    
+    public void deletePeminjaman(Long peminjamanId) {
+        peminjamanRepository.deleteById(peminjamanId);
+    }
+    
+    public Peminjaman updatePeminjaman(Peminjaman peminjaman){
+        return peminjamanRepository.save(peminjaman);
+    }
 }
